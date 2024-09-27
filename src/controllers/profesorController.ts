@@ -100,9 +100,10 @@ export const insertar = async (req: Request, res: Response): Promise<void> => {
 export const modificar = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<Response | void> => {
   const { id } = req.params;
   const { dni, nombre, apellido, email, profesion, telefono } = req.body;
+
   try {
     const profesorRepository = AppDataSource.getRepository(Profesor);
     const profesor = await profesorRepository.findOne({
@@ -113,7 +114,6 @@ export const modificar = async (
       return res.status(404).json({ mensaje: "Profesor no encontrado" });
     }
 
-    // Actualiza el profesor
     profesorRepository.merge(profesor, {
       dni,
       nombre,
@@ -124,13 +124,10 @@ export const modificar = async (
     });
     await profesorRepository.save(profesor);
 
-    // Devuelve una respuesta JSON
-    return res
-      .status(200)
-      .json({ mensaje: "Profesor actualizado exitosamente", profesor });
+    res.redirect("/profesores/listarProfesores");
   } catch (error) {
     console.error("Error al modificar el profesor:", error);
-    return res.status(500).json({ mensaje: "Error del servidor" });
+    return res.status(500).send("Error del servidor");
   }
 };
 
@@ -144,17 +141,11 @@ export const eliminar = async (
     const deleteResult = await profesorRepository.delete(id);
 
     if (deleteResult.affected === 1) {
-      return res
-        .status(200)
-        .json({ mensaje: "Profesor eliminado exitosamente" });
+      return res.json({ mensaje: "Profesor eliminado" });
     } else {
       return res.status(404).json({ mensaje: "Profesor no encontrado" });
     }
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      return res.status(500).json({ mensaje: err.message });
-    } else {
-      return res.status(500).json({ mensaje: "Error del servidor" });
-    }
+  } catch (err) {
+    return res.status(500).json({ mensaje: "Error al eliminar el profesor" });
   }
 };
