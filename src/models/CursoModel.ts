@@ -34,10 +34,4 @@ export class Curso {
     inverseJoinColumn: { name: "estudiante_id", referencedColumnName: "id" },
   })
   estudiantes: Estudiante[];
-
-  @CreateDateColumn()
-  createAt: Date;
-
-  @UpdateDateColumn()
-  updateAt: Date;
 }
