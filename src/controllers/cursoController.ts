@@ -15,20 +15,17 @@ export const mostrarFormularioCrearCurso = async (
 
     const profesorRepository = AppDataSource.getRepository(Profesor);
 
-    // Intentar obtener los profesores de la base de datos
     const profesores = await profesorRepository.find();
 
-    // Depuración: verificar si se obtienen los profesores
     if (profesores && profesores.length > 0) {
       console.log("Profesores obtenidos:", profesores);
     } else {
       console.log("No se encontraron profesores.");
     }
 
-    // Renderizar la vista con la lista de profesores
     res.render("crearCurso", {
       pagina: "Crear Curso",
-      profesores: profesores || [], // Asegurarse de pasar un array vacío si no hay profesores
+      profesores: profesores || [],
     });
   } catch (error) {
     console.error("Error al intentar obtener profesores:", error);
@@ -43,9 +40,8 @@ export const consultarTodos = async (
   try {
     const cursoRepository = AppDataSource.getRepository(Curso);
 
-    // Incluir la relación con el profesor
     const cursos = await cursoRepository.find({
-      relations: ["profesor"], // Asegúrate de traer la relación con profesores
+      relations: ["profesor"],
     });
 
     console.log(cursos);
@@ -70,20 +66,18 @@ export const consultarUno = async (
     const cursoRepository = AppDataSource.getRepository(Curso);
     const curso = await cursoRepository.findOne({
       where: { id: parseInt(id) },
-      relations: ["profesor"], // Incluir el profesor relacionado
+      relations: ["profesor"],
     });
 
     if (!curso) {
-      // No retornar, solo enviar la respuesta 404
       res.status(404).send("Curso no encontrado");
       return;
     }
 
-    // Renderizar la vista de modificar curso con los datos del curso
     res.render("modificarCurso", {
       pagina: "Modificar Curso",
       curso,
-      profesores: await AppDataSource.getRepository(Profesor).find(), // Obtener lista de profesores para cambiar si es necesario
+      profesores: await AppDataSource.getRepository(Profesor).find(),
     });
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -102,12 +96,10 @@ export const insertar = async (
     const cursoRepository = AppDataSource.getRepository(Curso);
     const profesorRepository = AppDataSource.getRepository(Profesor);
 
-    // Verificar si se ha seleccionado un profesor
     if (!id_profesor) {
       return res.status(400).json({ mensaje: "Debes seleccionar un profesor" });
     }
 
-    // Buscar el profesor en la base de datos
     const profesor = await profesorRepository.findOne({
       where: { id: parseInt(id_profesor) },
     });
@@ -116,16 +108,14 @@ export const insertar = async (
       return res.status(404).json({ mensaje: "Profesor no encontrado" });
     }
 
-    // Crear un nuevo curso con el profesor asociado
     const nuevoCurso = cursoRepository.create({
       nombre,
       descripcion,
-      profesor, // Asignar el profesor al curso
+      profesor,
     });
 
     await cursoRepository.save(nuevoCurso);
 
-    // Redirigir a la lista de cursos después de crear el curso
     return res.redirect("/cursos/listarCursos");
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -139,13 +129,12 @@ export const modificar = async (
   res: Response
 ): Promise<Response | void> => {
   const { id } = req.params;
-  const { id_profesor } = req.body; // Ahora solo permitimos modificar el profesor
+  const { id_profesor } = req.body;
 
   try {
     const cursoRepository = AppDataSource.getRepository(Curso);
     const profesorRepository = AppDataSource.getRepository(Profesor);
 
-    // Buscar el curso que se va a modificar
     const curso = await cursoRepository.findOne({
       where: { id: parseInt(id) },
       relations: ["profesor"],
@@ -155,7 +144,6 @@ export const modificar = async (
       return res.status(404).json({ mensaje: "Curso no encontrado" });
     }
 
-    // Buscar el profesor por ID si se proporciona
     if (id_profesor) {
       const profesor = await profesorRepository.findOne({
         where: { id: parseInt(id_profesor) },
@@ -163,13 +151,11 @@ export const modificar = async (
       if (!profesor) {
         return res.status(404).json({ mensaje: "Profesor no encontrado" });
       }
-      curso.profesor = profesor; // Asignar el nuevo profesor al curso
+      curso.profesor = profesor;
     }
 
-    // Guardar los cambios
     await cursoRepository.save(curso);
 
-    // Redirigir a la página de listar cursos después de modificar
     return res.redirect("/cursos/listarCursos");
   } catch (err: unknown) {
     if (err instanceof Error) {

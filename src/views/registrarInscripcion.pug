@@ -1,0 +1,24 @@
+extends ./layout
+
+block contenido
+    .py-10
+        h1.text-4xl.my-10.font-extrabold.text-center Proyecto
+            span.font-normal Universidad
+        h2.text-center.text-2xl.font-extrabold= pagina
+
+        .mt-8.mx-auto.max-w-md
+            .bg-white.py-8.px-4.shadow
+                form(method='POST' action='/inscripciones' noValidate)
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="estudiante_id") Estudiante
+                        select#estudiante_id.w-full.px-3.py-2.border.border-gray-300.rounded-md(name="estudiante_id")
+                            each estudiante in estudiantes
+                                option(value=estudiante.id)= estudiante.nombre + " " + estudiante.apellido
+
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="curso_id") Curso
+                        select#curso_id.w-full.px-3.py-2.border.border-gray-300.rounded-md(name="curso_id")
+                            each curso in cursos
+                                option(value=curso.id)= curso.nombre
+
+                    button(type='submit', class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all mt-4") Registrar Inscripción

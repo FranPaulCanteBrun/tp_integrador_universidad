@@ -2,7 +2,7 @@ extends ./layout
 
 block contenido
     .py-10
-        h1.text-4xl.my-10.font-extrabold.text-center Proyecto 
+        h1.text-4xl.my-10.font-extrabold.text-center Proyecto
             span.font-normal Universidad
         h2.text-center.text-2xl.font-extrabold= pagina
 
@@ -13,29 +13,29 @@ block contenido
 
         .mt-8.mx-auto.max-w-md
             .bg-white.py-8.px-4.shadow
-                form.space-y-5(method='POST' action='/profesores' noValidate)
-                    div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="dni") DNI
-                        input#dni.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="DNI" type="text" name="dni")
-                    
-                    div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="nombre") Nombre
-                        input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Nombre" type="text" name="nombre")
-                    
-                    div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="apellido") Apellido
-                        input#apellido.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Apellido" type="text" name="apellido")
-                    
-                    div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="email") Email
-                        input#email.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Email" type="email" name="email")
+                form(method='POST' action='/profesores')
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="dni") DNI
+                        input#dni.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="DNI" type="text" name="dni" required)
 
-                    div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="profesion") Profesión
-                        input#profesion.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Profesión" type="text" name="profesion")
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="nombre") Nombre
+                        input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Nombre" type="text" name="nombre" required)
 
-                    div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="telefono") Teléfono
-                        input#telefono.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Teléfono" type="text" name="telefono")
-                    
-                    input(class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 cursor-pointer" type="submit" value="Registrar Profesor")
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="apellido") Apellido
+                        input#apellido.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Apellido" type="text" name="apellido" required)
+
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="email") Email
+                        input#email.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Email" type="email" name="email" required)
+
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="profesion") Profesión
+                        input#profesion.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Profesión" type="text" name="profesion" required)
+
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="telefono") Teléfono
+                        input#telefono.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Teléfono" type="text" name="telefono" required)
+
+                    button(type='submit', class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all mt-4") Guardar Profesor

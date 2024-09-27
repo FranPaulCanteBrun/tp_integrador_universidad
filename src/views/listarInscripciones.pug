@@ -1,0 +1,68 @@
+extends ./layout
+
+block contenido
+
+    .flex.justify-end.mb-8
+        a(href="/inscripciones/registrarInscripcion" class="text-green-600 hover:text-green-800") Registrar Inscripción
+
+
+    .flex.flex-col.items-center.space-y-4.mt-8
+
+        form(method="GET" action="/inscripciones/buscarPorAlumno" class="flex items-center space-x-2")
+            input(type="text" name="nombre" placeholder="Buscar por Alumno" class="border border-gray-300 rounded-md px-3 py-2")
+            button(type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700") Buscar
+
+
+        form(method="GET" action="/inscripciones/buscarPorCurso" class="flex items-center space-x-2")
+            input(type="text" name="nombre" placeholder="Buscar por Curso" class="border border-gray-300 rounded-md px-3 py-2")
+            button(type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700") Buscar
+
+    .py-10
+        h1.text-4xl.my-10.font-extrabold.text-center Proyecto 
+            span.font-normal Universidad
+        h2.text-center.text-2xl.font-extrabold= pagina
+      
+        table.table-auto.w-full.mt-4
+            thead
+                tr
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Estudiante
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Curso
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Nota
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Acciones
+            tbody
+                each inscripcion in inscripciones
+                    tr
+                        td.px-6.py-4= inscripcion.estudiante.nombre + " " + inscripcion.estudiante.apellido
+                        td.px-6.py-4= inscripcion.curso.nombre
+
+                        td.px-6.py-4
+                            if inscripcion.nota == 0 || !inscripcion.nota
+                                | Sin calificar
+                            else
+                                = inscripcion.nota
+                        td.px-6.py-4
+                            a.text-blue-500.ml-2(href=`/inscripciones/calificar/${inscripcion.estudiante.id}/${inscripcion.curso.id}`) Calificar
+                            a.text-red-500.ml-2(href="#", onclick=`cancelarInscripcion('${inscripcion.estudiante.id}', '${inscripcion.curso.id}')`) Cancelar
+
+block scripts
+    script.
+        function cancelarInscripcion(estudiante_id, curso_id) {
+            if (confirm('¿Estás seguro de que deseas cancelar esta inscripción?')) {
+                fetch(`/inscripciones/${estudiante_id}/${curso_id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.mensaje === 'Inscripción cancelada con éxito') {
+                        alert('Inscripción cancelada con éxito.');
+                        window.location.reload();
+                    } else {
+                        alert(data.mensaje); 
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cancelar la inscripción.');
+                });
+            }
+        }

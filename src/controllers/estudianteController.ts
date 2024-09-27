@@ -76,10 +76,26 @@ export const consultarUno = async (
   }
 };
 
-export const insertar = async (req: Request, res: Response): Promise<void> => {
+export const insertar = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   const { dni, nombre, apellido, email } = req.body;
+
   try {
     const estudianteRepository = AppDataSource.getRepository(Estudiante);
+
+    const estudianteExistente = await estudianteRepository.findOne({
+      where: { dni },
+    });
+
+    if (estudianteExistente) {
+      return res.status(400).render("crearEstudiantes", {
+        pagina: "Registrar Estudiante",
+        errores: [{ msg: "El DNI ya está registrado" }],
+      });
+    }
+
     const nuevoEstudiante = estudianteRepository.create({
       dni,
       nombre,
@@ -87,10 +103,12 @@ export const insertar = async (req: Request, res: Response): Promise<void> => {
       email,
     });
     await estudianteRepository.save(nuevoEstudiante);
+
     res.redirect("/estudiantes/listarEstudiantes");
-  } catch (error) {
-    console.error("Error al insertar estudiante:", error);
-    res.status(500).send("Error del servidor");
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).send(err.message);
+    }
   }
 };
 
@@ -100,6 +118,13 @@ export const modificar = async (
 ): Promise<Response | void> => {
   const { id } = req.params;
   const { dni, nombre, apellido, email } = req.body;
+
+  if (!dni || !nombre || !apellido || !email) {
+    return res
+      .status(400)
+      .json({ mensaje: "Todos los campos son obligatorios" });
+  }
+
   try {
     const estudianteRepository = AppDataSource.getRepository(Estudiante);
     const estudiante = await estudianteRepository.findOne({
@@ -110,11 +135,9 @@ export const modificar = async (
       return res.status(404).json({ mensaje: "Estudiante no encontrado" });
     }
 
-    // Actualiza el estudiante
     estudianteRepository.merge(estudiante, { dni, nombre, apellido, email });
     await estudianteRepository.save(estudiante);
 
-    // Redirige a la lista de estudiantes después de modificar, sin "return"
     res.redirect("/estudiantes/listarEstudiantes");
   } catch (error) {
     console.error("Error al modificar el estudiante:", error);

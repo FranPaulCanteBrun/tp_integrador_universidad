@@ -19,7 +19,7 @@ router.post("/", validar(), insertar);
 
 router.get("/listarProfesores", consultarTodos);
 
-router.get("/modificarProfesor/:id", async (req, res) => {
+router.put("/modificarProfesor/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const profesor = await consultarUno(req, res);

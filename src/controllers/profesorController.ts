@@ -77,10 +77,26 @@ export const consultarUno = async (
   }
 };
 
-export const insertar = async (req: Request, res: Response): Promise<void> => {
+export const insertar = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   const { dni, nombre, apellido, email, profesion, telefono } = req.body;
+
   try {
     const profesorRepository = AppDataSource.getRepository(Profesor);
+
+    const profesorExistente = await profesorRepository.findOne({
+      where: { dni },
+    });
+
+    if (profesorExistente) {
+      return res.status(400).render("crearProfesores", {
+        pagina: "Registrar Profesor",
+        errores: [{ msg: "El DNI ya está registrado" }],
+      });
+    }
+
     const nuevoProfesor = profesorRepository.create({
       dni,
       nombre,
@@ -89,11 +105,13 @@ export const insertar = async (req: Request, res: Response): Promise<void> => {
       profesion,
       telefono,
     });
+
     await profesorRepository.save(nuevoProfesor);
-    res.redirect("/profesores/listarProfesores");
-  } catch (error) {
-    console.error("Error al insertar profesor:", error);
-    res.status(500).send("Error del servidor");
+    return res.status(201).redirect("/profesores/listarProfesores");
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).send(err.message);
+    }
   }
 };
 

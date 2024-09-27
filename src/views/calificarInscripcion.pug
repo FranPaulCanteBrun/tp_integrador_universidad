@@ -1,0 +1,41 @@
+extends ./layout
+
+block contenido
+    .py-10
+        h1.text-4xl.my-10.font-extrabold.text-center Proyecto
+            span.font-normal Universidad
+        h2.text-center.text-2xl.font-extrabold= pagina
+
+        .mt-8.mx-auto.max-w-md
+            .bg-white.py-8.px-4.shadow
+                form(method='POST' action=`/inscripciones/calificar/${inscripcion.estudiante.id}/${inscripcion.curso.id}?_method=PUT` noValidate onsubmit="return validarCalificacion()")
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="estudiante") Estudiante
+                        input#estudiante.w-full.px-3.py-2.border.border-gray-300.rounded-md(type="text" name="estudiante" value=inscripcion.estudiante.nombre + " " + inscripcion.estudiante.apellido readonly)
+
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="curso") Curso
+                        input#curso.w-full.px-3.py-2.border.border-gray-300.rounded-md(type="text" name="curso" value=inscripcion.curso.nombre readonly)
+
+                    div.mb-4
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="nota") Calificación
+                        input#nota.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Calificación" type="number" name="nota" min="1" max="10" value=inscripcion.nota)
+
+                    p#mensaje-error.text-red-600.hidden La calificación debe estar entre 1 y 10.
+
+                    button(type='submit', class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all mt-4") Guardar Calificación
+
+block scripts
+    script.
+        function validarCalificacion() {
+            const nota = document.getElementById('nota').value;
+            const mensajeError = document.getElementById('mensaje-error');
+            
+            if (nota < 1 || nota > 10) {
+                mensajeError.classList.remove('hidden');
+                return false;
+            } else {
+                mensajeError.classList.add('hidden');
+                return true;
+            }
+        }
